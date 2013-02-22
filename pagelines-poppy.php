@@ -55,21 +55,21 @@ class PageLinesPoppy {
 </div>
 
 <div class="modal-body">
-
-<form class="" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
+	<div class="poppy-response"></div>
+<form class="poppy-form" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
     <fieldset>
-		<div class="poppy-response"></div>
 		<div class="control-group">
 			<div class="controls form-inline">
-				<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="ajaxcontactname">
-				<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="ajaxcontactemail">
+				<input pattern="[\s\S]{10,}" required class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
+				<input type="email" required class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" name="Email">
 			</div>
 		</div>
 
 		<div class="control-group">
 			<div class="controls">
 				<div class="textarea">
-					<textarea class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="ajaxcontactcontents"></textarea>
+					<textarea required type="text" class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="Content"></textarea>
+					<span class="help-inline"></span>
 				</div>
 			</div>
 		</div>
@@ -77,7 +77,7 @@ class PageLinesPoppy {
 <?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
 	          <div class="controls">
-	            <a class="btn btn-primary send-poppy">Send Message</a>
+	            <button class="btn btn-primary send-poppy">Send Message</button>
 	          </div>
 
 
@@ -102,9 +102,9 @@ class PageLinesPoppy {
           <!-- Prepended text-->
           <label class="control-label">Captcha</label>
           <div class="controls">
-           
-              <input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
-         
+
+              <input required class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
+
           </div>
 
         </div>', ploption( 'poppy_captcha_question' ) );
@@ -178,8 +178,8 @@ class PageLinesPoppy {
 		$error			= 0;
 
 
-		$data = $_POST; 
-		
+		$data = $_POST;
+
 		$defaults = array(
 			'name'	=> '',
 			'email'	=> '',
@@ -188,7 +188,7 @@ class PageLinesPoppy {
 			'width'	=> '',
 			'height'=> '',
 			'agent' => ''
-		); 
+		);
 		$data = wp_parse_args($data, $defaults);
 
 

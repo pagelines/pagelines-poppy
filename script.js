@@ -2,7 +2,7 @@
 
 	$(document).ready(function() {
 
-		$('.send-poppy').on('click', function(){
+		$('.send-poppy').click(function(){
 
 			plSendMail()
 		})
@@ -33,6 +33,7 @@
 			,	success: function(response){
 
 					var responseElement = jQuery('.poppy-response')
+					var poppyForm = jQuery('.poppy-form')
 
 					responseElement
 						.hide()
@@ -45,9 +46,12 @@
 							.html('Great work! Your message was sent.')
 							.addClass('alert alert-success')
 
+						poppyForm
+							.html('')
+
 						setTimeout(function() {
 							jQuery('.poppy').modal('hide')
-						}, 2000);
+						}, 2000)
 
 					} else {
 						responseElement
@@ -65,4 +69,4 @@
 
 	}
 
-}(window.jQuery);
+)}(window.jQuery);
