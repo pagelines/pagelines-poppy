@@ -13,6 +13,7 @@
 
 		var name = $('.poppy-name').val()
 		,	email = $('.poppy-email').val()
+		,	custom = $('.poppy-custom').val()
 		,	msg = $('.poppy-msg').val()
 		,	captcha = $('.poppy-captcha').val()
 
@@ -23,6 +24,7 @@
 				action: 'ajaxcontact_send_mail'
 				,	name: name
 				,	email: email
+				,	custom: custom
 				,	msg: msg
 				,	cap: captcha
 				,	width:screen.width
