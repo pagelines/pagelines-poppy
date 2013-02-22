@@ -57,6 +57,7 @@ class PageLinesPoppy {
 			$class = 'label ' . $class;
 			$type = 'span';
 		}
+		$class = rtrim( $class ) . ' poppy-pointer';
 		ob_start();
 		printf( '<%s class="%s" data-toggle="modal" href="#poppy-modal">%s</%s>',
 			$type,
