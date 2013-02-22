@@ -2,7 +2,7 @@
 
 	$(document).ready(function() {
 
-		$('.send-poppy').click(function(){
+		$('.send-poppy').on('click', function(){
 
 			plSendMail()
 		})
@@ -69,4 +69,4 @@
 
 	}
 
-)}(window.jQuery);
+}(window.jQuery);

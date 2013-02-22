@@ -49,44 +49,35 @@ class PageLinesPoppy {
 <a class="btn" data-toggle="modal" href="#poppy-modal">Contact</a>
 
 <div id="poppy-modal" class="hide fade modal poppy" >
-
-<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
-	<h3><?php echo ploption( 'poppy_form_title' ) ?></h3>
-</div>
-
-<div class="modal-body">
-	<div class="poppy-response"></div>
-<form class="poppy-form" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
-    <fieldset>
-		<div class="control-group">
-			<div class="controls form-inline">
-				<input pattern="[\s\S]{10,}" required class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
-				<input type="email" required class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" name="Email">
-			</div>
-		</div>
-
-		<div class="control-group">
-			<div class="controls">
-				<div class="textarea">
-					<textarea required type="text" class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="Content"></textarea>
-					<span class="help-inline"></span>
+	<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+		<h3><?php echo ploption( 'poppy_form_title' ) ?></h3>
+	</div>
+	<div class="modal-body">
+		<div class="poppy-response"></div>
+		<form class="poppy-form" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
+			<fieldset>
+				<div class="control-group">
+					<div class="controls form-inline">
+						<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
+						<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" name="Email">
+					</div>
+				</div>
+			<div class="control-group">
+				<div class="controls">
+					<div class="textarea">
+						<textarea class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="Content"></textarea>
+					</div>
 				</div>
 			</div>
-		</div>
 
 <?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
-	          <div class="controls">
-	            <button class="btn btn-primary send-poppy">Send Message</button>
-	          </div>
-
-
-	    </fieldset>
-	  </form>
-
-
+			<div class="controls">
+				<a class="btn btn-primary send-poppy">Send Message</a>
+			</div>
+			</fieldset>
+		</form>
 	</div>
-
 </div>
 		<?php
 		$output = ob_get_contents();
@@ -98,17 +89,12 @@ class PageLinesPoppy {
 	function captcha() {
 
 		$code = sprintf( '<div class="control-group">
-
-          <!-- Prepended text-->
-          <label class="control-label">Captcha</label>
-          <div class="controls">
-
-              <input required class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
-
-          </div>
-
-        </div>', ploption( 'poppy_captcha_question' ) );
-        echo $code;
+		<label class="control-label">Captcha</label>
+		<div class="controls">
+			<input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
+		</div>
+	</div>', ploption( 'poppy_captcha_question' ) );
+	echo $code;
 	}
 
 
