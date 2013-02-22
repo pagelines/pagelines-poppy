@@ -15,26 +15,29 @@
 		,	email = $('.poppy-email').val()
 		,	msg = $('.poppy-msg').val()
 		,	captcha = $('.poppy-captcha').val()
-		
+
 		jQuery.ajax({
 			type: 'POST'
-			, url: ajaxurl
+			, url: poppyjs.ajaxurl
 			, data: {
 				action: 'ajaxcontact_send_mail'
 				,	name: name
 				,	email: email
 				,	msg: msg
 				,	cap: captcha
+				,	width:screen.width
+				,	height:screen.height
+				,	agent:navigator.userAgent
 			}
 
 			,	success: function(response){
-				
+
 					var responseElement = jQuery('.poppy-response')
 
 					responseElement
 						.hide()
 						.removeClass('alert alert-error alert-success')
-				
+
 
 					if (response == "ok") {
 						responseElement

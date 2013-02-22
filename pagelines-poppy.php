@@ -14,45 +14,38 @@ class PageLinesPoppy {
 
 	function __construct() {
 
-		$this->base_dir = sprintf( '%s/%s', WP_PLUGIN_DIR,  basename(dirname( __FILE__ )));
-		$this->base_url = sprintf( '%s/%s', WP_PLUGIN_URL,  basename(dirname( __FILE__ )));
-		$this->icon = $this->base_url . '/icon.png';
+		$this->base_dir	= plugin_dir_path( __FILE__ );
+		$this->base_url = plugins_url( __FILE__ );
+		$this->icon		= plugins_url( '/icon.png', __FILE__ );
+		$this->less		= $this->base_dir . '/style.less';
+
 		add_filter( 'pagelines_lesscode', array( &$this, 'get_less' ), 10, 1 );
-	
 		add_action( 'admin_init', array( &$this, 'admin_page' ) );
-		
 		add_action( 'init', array( &$this, 'add_shortcode' ) );
-		
-		add_action( 'wp_print_styles', array( &$this, 'hooks_with_activation' ));	
-		
+		add_action( 'wp_enqueue_scripts', array( &$this, 'hooks_with_activation' ) );
 		add_action( 'wp_ajax_nopriv_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
 		add_action( 'wp_ajax_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
 	}
 
+	function hooks_with_activation() {
+		wp_enqueue_script( 'poppyjs', plugins_url( '/script.js', __FILE__ ), array( 'jquery' ), time() );
+		wp_localize_script( 'poppyjs', 'poppyjs', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+	}
 
+	function get_less( $less ){
 
-function get_less( $less ){
-	
-	$less .= pl_file_get_contents( $this->base_dir.'/style.less' );
+		$less .= pl_file_get_contents( $this->less );
+		return $less;
 
-	return $less;
-	
-}
+	}
+	function add_shortcode() {
+		add_shortcode( 'poppy', array(  &$this, 'draw_form' ) );
+	}
 
-function hooks_with_activation() {
-	wp_localize_script( 'ajaxurl', 'ajaxurl', array( admin_url( 'admin-ajax.php' ) ) );
-	wp_enqueue_script( 'poppy-js', $this->base_url . '/script.js', array('jquery')); 
-	
-}
-
-function add_shortcode() {
-	add_shortcode( 'poppy', array(  &$this, 'draw_form' ) );
-}
-
-function draw_form() {
+	function draw_form() {
 	ob_start();
 	?>
-	
+
 <a class="btn" data-toggle="modal" href="#poppy-modal">Contact</a>
 
 <div id="poppy-modal" class="hide fade modal poppy" >
@@ -90,8 +83,8 @@ function draw_form() {
 
 	    </fieldset>
 	  </form>
-	
-	
+
+
 	</div>
 
 </div>
@@ -130,39 +123,34 @@ function draw_form() {
 			'icon'		=> $this->icon,
 			'position'	=> 6
 		);
-
-		foreach( $option_args['array'] as $k => $o )
-			if( ! ploption( $k ) && isset( $o['default'] ) )
-				plupop( $k, $o['default'] );
 		pl_add_options_page( $option_args );
 	}
 
 	function options_array() {
 
 		$options = array(
+
+			'poppy_options'	=> array(
+				'type'	=> 'multi_option',
+				'layout'	=> 'full',
+				'exp'	=> 'Customize how the subject is handled in your email client.<br />Possible values:<br />%name%<br />%blog%',
+				'selectvalues'	=> array(
 					'poppy_form_title' => array(
 						'type' 		=> 'text',
 						'inputlabel'	=>'Form Title.',
-						'default'	=> 'Contact Us',
-						'exp' => 'Main title for the form.'
-					),
+						'default'	=> 'Contact Us!',
+						'shortexp' => 'Main title for the form.'
+						),
 					'poppy_email'	=> array(
 						'type'	=> 'text',
 						'inputlabel'	=> 'Default email send address.',
 						'exp'	=> 'Email address to send for To. Leave blank to use admin email.'
 						),
-					'poppy_misc'	=> array(
-						'type'	=> 'check_multi',
-						'selectvalues'	=> array(
-							'poppy_enable_captcha'	=> array(
-								'default'	=> true,
-								'inputlabel'	=> 'Enable simple antispam question?')
-							)),
-
-					'poppy_captcha'	=> array(
-						'type'		=> 'text_multi',
-						'inputsize'	=> 'regular',
-						'selectvalues'	=> array(
+					'poppy_enable_captcha'	=> array(
+						'type'	=> 'check',
+						'default'	=> true,
+						'inputlabel'	=> 'Enable simple antispam question?'
+						),
 					'poppy_captcha_question'	=> array(
 						'type'	=> 'text',
 						'default'	=> '2 + 5',
@@ -171,67 +159,84 @@ function draw_form() {
 					'poppy_captcha_answer'	=> array(
 						'type'	=> 'text',
 						'default'	=> '7',
-						'inputlabel'	=> 'Antispam answer' )
+						'inputlabel'	=> 'Antispam answer'
+						),
+					'poppy_email_layout'	=> array(
+						'type'	=> 'text',
+						'inputlabel'	=> 'Format for email subject.',
+						'default'	=> '[%blog%] New message from %name%.',
 
-
-					))
-
-
+						)
+					)
+				)
 			);
 	return $options;
 	}
 
 	function ajaxcontact_send_mail(){
-  		$results = '';
-		$error = 0;
-		
+  		$results		= '';
+		$error			= 0;
+
+
 		$data = $_POST; 
 		
 		$defaults = array(
 			'name'	=> '',
 			'email'	=> '',
 			'msg'	=> '',
-			'cap'	=> ''
+			'cap'	=> '',
+			'width'	=> '',
+			'height'=> '',
+			'agent' => ''
 		); 
 		$data = wp_parse_args($data, $defaults);
-		
-		$name = $data['name'];
-		$email = $data['email'];
-		$contents = $data['msg'];
-		$captcha = $data['cap'];
-		
-		$admin_email = ( ploption( 'poppy_email' ) ) ? ploption( 'poppy_email' ) : get_option('admin_email');
-		
-		$subject = 'New Message from '.$name;
-		
-		$captcha_ans = ploption( 'poppy_captcha_answer' );
+
+
+
+		$name			= $data['name'];
+		$email			= $data['email'];
+		$contents		= $data['msg'];
+		$admin_email	= ( ploption( 'poppy_email' ) ) ? ploption( 'poppy_email' ) : get_option( 'admin_email' );
+		$captcha		= $data['cap'];
+		$captcha_ans	= ploption( 'poppy_captcha_answer' );
+		$width			= $data['width'];
+		$height			= $data['height'];
+		$ip				= $_SERVER['REMOTE_ADDR'];
+		$agent			= $data['agent'];
 
 		if ( ploption( 'poppy_enable_captcha' ) ){
-			
 			if( '' == $captcha )
 				die( 'Captcha cannot be empty!' );
 			if( $captcha !== $captcha_ans )
 				die( 'Captcha does not match.' );
 		}
 
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 			die( 'Email address is not valid.' );
-			
-		elseif( strlen($name) == 0 ) 
-			die( 'Name is invalid.' );
-			
-		elseif( strlen($contents) == 0 )
-			die( 'Content is invalid.' );
-		
+		} elseif( strlen( $name ) == 0 ) {
+			die( 'Name cannot be empty.' );
+		} elseif( strlen( $contents ) == 0 ) {
+			die( 'Content cannot be empty.' );
+		}
 
-		$headers = 'From:'.$email. "\r\n";
-		
-		if(wp_mail($admin_email, $subject, $contents, $headers)) 
+		// create an email.
+		$headers			= 'From:'.$email. "\r\n";
+		$subject_template	= ( '' != ploption( 'poppy_email_layout' ) ) ? ploption( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
+		$subject			= str_replace( '%blog%', get_bloginfo( 'name' ), str_replace( '%name%', $name, $subject_template ) );
+
+		$template = sprintf( 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s',
+			$name,
+			$email,
+			$contents,
+			$ip,
+			sprintf( '%sx%s', $width, $height ),
+			$agent,
+			"\n" );
+		if( wp_mail( $admin_email, $subject, $template, $headers ) ) {
 			die( 'ok' );
-		else
-			die( "*The mail could not be sent." );
-		
+		} else {
+			 die( 'Unknown wp_mail() error.' );
+		}
 	}
 }
-
 new PageLinesPoppy;
