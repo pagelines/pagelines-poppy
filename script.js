@@ -13,6 +13,7 @@
 
 		var name = $('.poppy-name').val()
 		,	email = $('.poppy-email').val()
+		,	custom = $('.poppy-custom').val()
 		,	msg = $('.poppy-msg').val()
 		,	captcha = $('.poppy-captcha').val()
 
@@ -23,6 +24,7 @@
 				action: 'ajaxcontact_send_mail'
 				,	name: name
 				,	email: email
+				,	custom: custom
 				,	msg: msg
 				,	cap: captcha
 				,	width:screen.width
@@ -33,6 +35,7 @@
 			,	success: function(response){
 
 					var responseElement = jQuery('.poppy-response')
+					var poppyForm = jQuery('.poppy-form')
 
 					responseElement
 						.hide()
@@ -45,9 +48,12 @@
 							.html('Great work! Your message was sent.')
 							.addClass('alert alert-success')
 
+						poppyForm
+							.html('')
+
 						setTimeout(function() {
 							jQuery('.poppy').modal('hide')
-						}, 2000);
+						}, 2000)
 
 					} else {
 						responseElement

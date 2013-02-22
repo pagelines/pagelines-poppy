@@ -42,51 +42,63 @@ class PageLinesPoppy {
 		add_shortcode( 'poppy', array(  &$this, 'draw_form' ) );
 	}
 
-	function draw_form() {
-	ob_start();
+	function draw_form( $atts, $content = null ) {
+
+		extract( shortcode_atts( array(
+		    'class' => '',
+		    'type'	=> 'button',
+		), $atts ) );
+
+		if( ! $content )
+			$content = 'Contact';
+		if( 'button' == $type )
+			$class = 'btn ' . $class;
+		if( 'label' == $type ) {
+			$class = 'label ' . $class;
+			$type = 'span';
+		}
+		$class = rtrim( $class ) . ' poppy-pointer';
+		ob_start();
+		printf( '<%s class="%s" data-toggle="modal" href="#poppy-modal">%s</%s>',
+			$type,
+			$class,
+			$content,
+			$type
+			);
 	?>
-
-<a class="btn" data-toggle="modal" href="#poppy-modal">Contact</a>
-
 <div id="poppy-modal" class="hide fade modal poppy" >
-
-<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
-	<h3><?php echo ploption( 'poppy_form_title' ) ?></h3>
-</div>
-
-<div class="modal-body">
-
-<form class="" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
-    <fieldset>
+	<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
+		<h3><?php echo ploption( 'poppy_form_title' ) ?></h3>
+	</div>
+	<div class="modal-body">
 		<div class="poppy-response"></div>
-		<div class="control-group">
-			<div class="controls form-inline">
-				<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="ajaxcontactname">
-				<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="ajaxcontactemail">
-			</div>
-		</div>
-
-		<div class="control-group">
-			<div class="controls">
-				<div class="textarea">
-					<textarea class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="ajaxcontactcontents"></textarea>
+		<form class="poppy-form" id="ajaxcontactform" action="" method="post" enctype="multipart/form-data">
+			<fieldset>
+				<div class="control-group">
+					<div class="controls form-inline">
+						<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
+						<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="Email">
+						<?php if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
+								printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">',ploption( 'poppy_extra_field' ) );
+						?>
+					</div>
+				</div>
+			<div class="control-group">
+				<div class="controls">
+					<div class="textarea">
+						<textarea class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="Content"></textarea>
+					</div>
 				</div>
 			</div>
-		</div>
 
 <?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
-	          <div class="controls">
-	            <a class="btn btn-primary send-poppy">Send Message</a>
-	          </div>
-
-
-	    </fieldset>
-	  </form>
-
-
+			<div class="controls">
+				<a class="btn btn-primary send-poppy">Send Message</a>
+			</div>
+			</fieldset>
+		</form>
 	</div>
-
 </div>
 		<?php
 		$output = ob_get_contents();
@@ -98,17 +110,12 @@ class PageLinesPoppy {
 	function captcha() {
 
 		$code = sprintf( '<div class="control-group">
-
-          <!-- Prepended text-->
-          <label class="control-label">Captcha</label>
-          <div class="controls">
-           
-              <input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
-         
-          </div>
-
-        </div>', ploption( 'poppy_captcha_question' ) );
-        echo $code;
+		<label class="control-label">Captcha</label>
+		<div class="controls">
+			<input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
+		</div>
+	</div>', ploption( 'poppy_captcha_question' ) );
+	echo $code;
 	}
 
 
@@ -146,6 +153,16 @@ class PageLinesPoppy {
 						'inputlabel'	=> 'Default email send address.',
 						'exp'	=> 'Email address to send for To. Leave blank to use admin email.'
 						),
+					'poppy_enable_extra'	=> array(
+						'type'	=> 'check',
+						'default'	=> false,
+						'inputlabel'	=> 'Enable extra custom field.'
+						),
+					'poppy_extra_field'	=> array(
+						'type'	=> 'text',
+						'default'	=> '',
+						'inputlabel'	=> 'Extra field text.'
+						),
 					'poppy_enable_captcha'	=> array(
 						'type'	=> 'check',
 						'default'	=> true,
@@ -174,27 +191,26 @@ class PageLinesPoppy {
 	}
 
 	function ajaxcontact_send_mail(){
-  		$results		= '';
-		$error			= 0;
 
+		$data = $_POST;
 
-		$data = $_POST; 
-		
 		$defaults = array(
 			'name'	=> '',
 			'email'	=> '',
+			'custom'=> '',
 			'msg'	=> '',
 			'cap'	=> '',
 			'width'	=> '',
 			'height'=> '',
 			'agent' => ''
-		); 
+		);
+
 		$data = wp_parse_args($data, $defaults);
-
-
 
 		$name			= $data['name'];
 		$email			= $data['email'];
+		$custom			= $data['custom'];
+		$custom_field	= ( ploption( 'poppy_enable_extra' ) ) ? ploption( 'poppy_extra_field' ) : '';
 		$contents		= $data['msg'];
 		$admin_email	= ( ploption( 'poppy_email' ) ) ? ploption( 'poppy_email' ) : get_option( 'admin_email' );
 		$captcha		= $data['cap'];
@@ -224,14 +240,19 @@ class PageLinesPoppy {
 		$subject_template	= ( '' != ploption( 'poppy_email_layout' ) ) ? ploption( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
 		$subject			= str_replace( '%blog%', get_bloginfo( 'name' ), str_replace( '%name%', $name, $subject_template ) );
 
-		$template = sprintf( 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s',
+		$fields = 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s %7$s%7$s%8$s: %9$s';
+
+		$template = sprintf( $fields,
 			$name,
 			$email,
 			$contents,
 			$ip,
 			sprintf( '%sx%s', $width, $height ),
 			$agent,
-			"\n" );
+			"\n",
+			$custom_field,
+			$custom
+			);
 		if( wp_mail( $admin_email, $subject, $template, $headers ) ) {
 			die( 'ok' );
 		} else {
