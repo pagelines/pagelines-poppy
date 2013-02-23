@@ -39,10 +39,10 @@ class PageLinesPoppy {
 
 	}
 	function add_shortcode() {
-		add_shortcode( 'poppy', array(  &$this, 'draw_form' ) );
+		add_shortcode( 'poppy', array(  &$this, 'draw_button' ) );
 	}
 
-	function draw_form( $atts, $content = null ) {
+	function draw_button( $atts, $content = null ) {
 
 		extract( shortcode_atts( array(
 		    'class' => '',
@@ -58,13 +58,19 @@ class PageLinesPoppy {
 			$type = 'span';
 		}
 		$class = rtrim( $class ) . ' poppy-pointer';
-		ob_start();
-		printf( '<%s class="%s" data-toggle="modal" href="#poppy-modal">%s</%s>',
+		
+		$button = sprintf( '<%s class="%s" data-toggle="modal" href="#poppy-modal">%s</%s>',
 			$type,
 			$class,
 			$content,
 			$type
 			);
+		add_action( 'wp_footer', array( &$this, 'form' ) );
+		return $button;
+	}
+
+	function form() {
+		ob_start();
 	?>
 <div id="poppy-modal" class="hide fade modal poppy" >
 	<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
@@ -101,9 +107,8 @@ class PageLinesPoppy {
 	</div>
 </div>
 		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
+		$form = ob_get_clean();
+		echo $form;
 	}
 
 
