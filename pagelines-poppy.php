@@ -15,10 +15,9 @@ class PageLinesPoppy {
 	function __construct() {
 
 		$this->base_dir	= plugin_dir_path( __FILE__ );
-		$this->base_url = plugins_url( __FILE__ );
+		$this->base_url = plugins_url( '', __FILE__ );
 		$this->icon		= plugins_url( '/icon.png', __FILE__ );
 		$this->less		= $this->base_dir . '/style.less';
-
 		add_filter( 'pagelines_lesscode', array( &$this, 'get_less' ), 10, 1 );
 		add_action( 'admin_init', array( &$this, 'admin_page' ) );
 		add_action( 'init', array( &$this, 'add_shortcode' ) );
@@ -58,7 +57,7 @@ class PageLinesPoppy {
 			$type = 'span';
 		}
 		$class = rtrim( $class ) . ' poppy-pointer';
-		
+
 		$button = sprintf( '<%s class="%s" data-toggle="modal" href="#poppy-modal">%s</%s>',
 			$type,
 			$class,
@@ -97,7 +96,7 @@ class PageLinesPoppy {
 				</div>
 			</div>
 
-<?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
+			<?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
 			<div class="controls">
 				<a class="btn btn-primary send-poppy">Send Message</a>
