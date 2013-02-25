@@ -1,0 +1,8 @@
+== Description ==
+Adds a useful and versitile contact form shortcode to be used anywhere.
+
+== Changelog ==
+
+= 1.0 =
+
+* Release.
