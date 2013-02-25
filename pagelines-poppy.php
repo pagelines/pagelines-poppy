@@ -6,7 +6,6 @@ Description: Adds a simple contact form shortcode to be used anywhere on your si
 Author: PageLines
 PageLines: true
 Version: 1.0
-External: http://www.pagelines.com
 Demo: http://poppy.pagelines.me
 */
 
@@ -144,7 +143,7 @@ class PageLinesPoppy {
 			'poppy_options'	=> array(
 				'type'	=> 'multi_option',
 				'layout'	=> 'full',
-				'exp'	=> 'Here are a few examples:<br /><strong>[poppy]</strong> Creates a standard button with the word "Contact"<br /><strong>[poppy]Email me![/poppy]</strong> Same as above with custom text.<br /><strong>[poppy type="a"]Contact me.[/poppy]</strong> This uses a standard HTML link.<br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong> Here we are using the bootstrap button, and adding a class.<br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong> What about a bootstrap label?<br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong> Finally a giant font-awesome envelope!',
+				'exp'	=> 'Here are a few examples:<br /><br /><strong>[poppy]</strong><br />Creates a standard button with the word "Contact"<br /><br /><strong>[poppy]Email me![/poppy]</strong><br />Same as above with custom text.<br /><br /><strong>[poppy type="a"]Contact me.[/poppy]</strong><br />This uses a standard HTML link.<br /><br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong><br />Here we are using the bootstrap button, and adding a class.<br /><br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong><br />What about a bootstrap label?<br /><br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong><br />Finally a giant font-awesome envelope!',
 				'selectvalues'	=> array(
 					'poppy_form_title' => array(
 						'type' 		=> 'text',
