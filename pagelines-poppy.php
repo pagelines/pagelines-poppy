@@ -2,7 +2,7 @@
 /*
 Plugin Name: Poppy
 Plugin URI: http://www.pagelines.com
-Description: Adds a useful and versitile contact form shortcode to be used anywhere.
+Description: Adds a simple contact form shortcode to be used anywhere on your site.
 Author: PageLines
 PageLines: true
 Version: 1.0
@@ -144,38 +144,38 @@ class PageLinesPoppy {
 			'poppy_options'	=> array(
 				'type'	=> 'multi_option',
 				'layout'	=> 'full',
-				'exp'	=> 'Customize how the subject is handled in your email client.<br />Possible values:<br />%name%<br />%blog%',
+				'exp'	=> 'Here are a few examples:<br /><strong>[poppy]</strong> Creates a standard button with the word "Contact"<br /><strong>[poppy]Email me![/poppy]</strong> Same as above with custom text.<br /><strong>[poppy type="a"]Contact me.[/poppy]</strong> This uses a standard HTML link.<br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong> Here we are using the bootstrap button, and adding a class.<br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong> What about a bootstrap label?<br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong> Finally a giant font-awesome envelope!',
 				'selectvalues'	=> array(
 					'poppy_form_title' => array(
 						'type' 		=> 'text',
-						'inputlabel'	=>'Form Title.',
+						'inputlabel'	=>'Form Title',
 						'default'	=> 'Contact Us!',
 						'shortexp' => 'Main title for the form.'
 						),
 					'poppy_email'	=> array(
 						'type'	=> 'text',
-						'inputlabel'	=> 'Default email send address.',
-						'exp'	=> 'Email address to send for To. Leave blank to use admin email.'
+						'inputlabel'	=> 'Default email send address',
+						'exp'	=> 'Email address to send for To. Leave blank to use admin email'
 						),
 					'poppy_enable_extra'	=> array(
 						'type'	=> 'check',
 						'default'	=> false,
-						'inputlabel'	=> 'Enable extra custom field.'
+						'inputlabel'	=> 'Enable extra custom field'
 						),
 					'poppy_extra_field'	=> array(
 						'type'	=> 'text',
 						'default'	=> '',
-						'inputlabel'	=> 'Extra field text.'
+						'inputlabel'	=> 'Extra field text'
 						),
 					'poppy_enable_captcha'	=> array(
 						'type'	=> 'check',
 						'default'	=> true,
-						'inputlabel'	=> 'Enable simple antispam question?'
+						'inputlabel'	=> 'Enable simple antispam question'
 						),
 					'poppy_captcha_question'	=> array(
 						'type'	=> 'text',
 						'default'	=> '2 + 5',
-						'inputlabel'	=> 'Antispam question.'
+						'inputlabel'	=> 'Antispam question'
 						),
 					'poppy_captcha_answer'	=> array(
 						'type'	=> 'text',
@@ -184,7 +184,7 @@ class PageLinesPoppy {
 						),
 					'poppy_email_layout'	=> array(
 						'type'	=> 'text',
-						'inputlabel'	=> 'Format for email subject.',
+						'inputlabel'	=> 'Format for email subject. Possible values: %name% %blog%',
 						'default'	=> '[%blog%] New message from %name%.',
 
 						)
