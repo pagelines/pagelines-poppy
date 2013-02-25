@@ -2,7 +2,7 @@
 Adds a simple contact form shortcode to be used anywhere on your site.
 
 = Here are a few examples =
-<br /><strong>[poppy]</strong><br />Creates a standard button with the word "Contact"<br /><br /><strong>[poppy]Email me![/poppy]</strong><br />Same as above with custom text.<br /><br /><strong>[poppy type="a"]Contact me.[/poppy]</strong><br />This uses a standard HTML link.<br /><br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong><br />Here we are using the bootstrap button, and adding a class.<br /><br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong><br />What about a bootstrap label?<br /><br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong><br />Finally a giant font-awesome envelope!
+<br /><em>[poppy]</em><br />Creates a standard button with the word "Contact"<br /><br /><em>[poppy]Email me![/poppy</em><br />Same as above with custom text.<br /><br /><em>[poppy type="a"]Contact me.[/poppy]</em><br />This uses a standard HTML link.<br /><br /><em>[poppy type="button" class="btn-important"]Email.[/poppy]</em><br />Here we are using the bootstrap button, and adding a class.<br /><br /><em>[poppy type="label" class="label-warning"]CONTACT[/poppy]</em><br />What about a bootstrap label?<br /><br /><em>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</em><br />Finally a giant font-awesome envelope!
 
 
 == Changelog ==
