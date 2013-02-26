@@ -83,7 +83,7 @@ class PageLinesPoppy {
 						<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
 						<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="Email">
 						<?php if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
-								printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">',ploption( 'poppy_extra_field' ) );
+								printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( ploption( 'poppy_extra_field' ) ) );
 						?>
 					</div>
 				</div>
@@ -117,7 +117,7 @@ class PageLinesPoppy {
 		<div class="controls">
 			<input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
 		</div>
-	</div>', ploption( 'poppy_captcha_question' ) );
+	</div>', stripslashes( ploption( 'poppy_captcha_question' ) ) );
 	echo $code;
 	}
 
@@ -195,7 +195,7 @@ class PageLinesPoppy {
 
 	function ajaxcontact_send_mail(){
 
-		$data = $_POST;
+		$data = stripslashes_deep( $_POST );
 
 		$defaults = array(
 			'name'	=> '',
@@ -241,8 +241,8 @@ class PageLinesPoppy {
 		// create an email.
 		$subject_template	= ( '' != ploption( 'poppy_email_layout' ) ) ? ploption( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
 		$subject			= str_replace( '%blog%', get_bloginfo( 'name' ), str_replace( '%name%', $name, $subject_template ) );
-
-		$fields = 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s %7$s%7$s%8$s: %9$s';
+		$custom 			= ( $custom_field ) ? sprintf( '%s: %s', $custom_field, $custom ) : '';
+		$fields = 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s %7$s%7$s%8$s';
 
 		$template = sprintf( $fields,
 			$name,
@@ -252,7 +252,6 @@ class PageLinesPoppy {
 			sprintf( '%sx%s', $width, $height ),
 			$agent,
 			"\n",
-			$custom_field,
 			$custom
 			);
 		if( wp_mail( $admin_email, $subject, $template ) ) {
