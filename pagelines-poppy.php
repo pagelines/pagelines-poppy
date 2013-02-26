@@ -5,7 +5,7 @@ Plugin URI: http://www.pagelines.com
 Description: Adds a simple contact form shortcode to be used anywhere on your site.
 Author: PageLines
 PageLines: true
-Version: 1.0
+Version: 1.1
 Demo: http://poppy.pagelines.me
 */
 
