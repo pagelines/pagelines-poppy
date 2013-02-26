@@ -239,7 +239,6 @@ class PageLinesPoppy {
 		}
 
 		// create an email.
-		$headers			= 'From:'.$email. "\r\n";
 		$subject_template	= ( '' != ploption( 'poppy_email_layout' ) ) ? ploption( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
 		$subject			= str_replace( '%blog%', get_bloginfo( 'name' ), str_replace( '%name%', $name, $subject_template ) );
 
@@ -256,7 +255,7 @@ class PageLinesPoppy {
 			$custom_field,
 			$custom
 			);
-		if( wp_mail( $admin_email, $subject, $template, $headers ) ) {
+		if( wp_mail( $admin_email, $subject, $template ) ) {
 			die( 'ok' );
 		} else {
 			 die( 'Unknown wp_mail() error.' );
