@@ -23,6 +23,12 @@ class PageLinesPoppy {
 		add_action( 'wp_enqueue_scripts', array( &$this, 'hooks_with_activation' ) );
 		add_action( 'wp_ajax_nopriv_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
 		add_action( 'wp_ajax_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
+		add_action( 'plugins_loaded', array( &$this, 'translate') );
+	}
+
+	function translate() {
+ 		$plugin_dir = basename( dirname( __FILE__ ) );
+ 		load_plugin_textdomain( 'pagelines-poppy', false, $plugin_dir );
 	}
 
 	function hooks_with_activation() {
@@ -69,6 +75,10 @@ class PageLinesPoppy {
 
 	function form() {
 		ob_start();
+		$email		= __( 'Email', 'pagelines-poppy' );
+		$name		= __( 'Name', 'pagelines-poppy' );
+		$message	= __( 'Your Message...', 'pagelines-poppy' );
+		$send		= __( 'Send Message', 'pagelines-poppy' );
 	?>
 <div id="poppy-modal" class="hide fade modal poppy" >
 	<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
@@ -80,17 +90,18 @@ class PageLinesPoppy {
 			<fieldset>
 				<div class="control-group">
 					<div class="controls form-inline">
-						<input class="poppy-input poppy-name" placeholder="Name" id="ajaxcontactname" type="text" name="Name">
-						<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="Email">
-						<?php if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
-								printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( ploption( 'poppy_extra_field' ) ) );
+						<?php
+						printf( '<input class="poppy-input poppy-name" placeholder="%1$s" id="ajaxcontactname" type="text" name="%1$s">', $name );
+						printf( '<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="Email">',$email );
+						if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
+							printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( ploption( 'poppy_extra_field' ) ) );
 						?>
 					</div>
 				</div>
 			<div class="control-group">
 				<div class="controls">
 					<div class="textarea">
-						<textarea class="poppy-msg" row="8" placeholder="Your Message..." id="ajaxcontactcontents" name="Content"></textarea>
+						<?php printf( '<textarea class="poppy-msg" row="8" placeholder="%1$s" id="ajaxcontactcontents" name="%$1s"></textarea>', $message ); ?>
 					</div>
 				</div>
 			</div>
@@ -98,7 +109,7 @@ class PageLinesPoppy {
 			<?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
 			<div class="controls">
-				<a class="btn btn-primary send-poppy">Send Message</a>
+				<?php printf( '<a class="btn btn-primary send-poppy">%s</a>', $send ); ?>
 			</div>
 			</fieldset>
 		</form>
@@ -142,48 +153,50 @@ class PageLinesPoppy {
 
 			'poppy_options'	=> array(
 				'type'	=> 'multi_option',
+				'title'	=>	__( 'Poppy Options', 'pagelines-poppy' ),
+				'shortexp'	=> __( 'Configure poppy popup forms, click more info for shortcode examples', 'pagelines-poppy' ),
 				'layout'	=> 'full',
 				'exp'	=> 'Here are a few examples:<br /><br /><strong>[poppy]</strong><br />Creates a standard button with the word "Contact"<br /><br /><strong>[poppy]Email me![/poppy]</strong><br />Same as above with custom text.<br /><br /><strong>[poppy type="a"]Contact me.[/poppy]</strong><br />This uses a standard HTML link.<br /><br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong><br />Here we are using the bootstrap button, and adding a class.<br /><br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong><br />What about a bootstrap label?<br /><br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong><br />Finally a giant font-awesome envelope!',
 				'selectvalues'	=> array(
 					'poppy_form_title' => array(
 						'type' 		=> 'text',
-						'inputlabel'	=>'Form Title',
-						'default'	=> 'Contact Us!',
-						'shortexp' => 'Main title for the form.'
+						'inputlabel'	=> __( 'Form Title', 'pagelines-poppy' ),
+						'default'	=> __( 'Contact Us!', 'pagelines-poppy' ),
+						'shortexp' => __( 'Main title for the form.', 'pagelines-poppy' )
 						),
 					'poppy_email'	=> array(
 						'type'	=> 'text',
-						'inputlabel'	=> 'Default email send address',
-						'exp'	=> 'Email address to send for To. Leave blank to use admin email'
+						'inputlabel'	=> __( 'Default email send address', 'pagelines-poppy' ),
+						'exp'	=> __( 'Email address to send for To. Leave blank to use admin email', 'pagelines-poppy' )
 						),
 					'poppy_enable_extra'	=> array(
 						'type'	=> 'check',
 						'default'	=> false,
-						'inputlabel'	=> 'Enable extra custom field'
+						'inputlabel'	=> __( 'Enable extra custom field', 'pagelines-poppy' )
 						),
 					'poppy_extra_field'	=> array(
 						'type'	=> 'text',
 						'default'	=> '',
-						'inputlabel'	=> 'Extra field text'
+						'inputlabel'	=> __( 'Extra field text', 'pagelines-poppy' )
 						),
 					'poppy_enable_captcha'	=> array(
 						'type'	=> 'check',
 						'default'	=> true,
-						'inputlabel'	=> 'Enable simple antispam question'
+						'inputlabel'	=> __( 'Enable simple antispam question', 'pagelines-poppy' )
 						),
 					'poppy_captcha_question'	=> array(
 						'type'	=> 'text',
 						'default'	=> '2 + 5',
-						'inputlabel'	=> 'Antispam question'
+						'inputlabel'	=> __( 'Antispam question', 'pagelines-poppy' )
 						),
 					'poppy_captcha_answer'	=> array(
 						'type'	=> 'text',
 						'default'	=> '7',
-						'inputlabel'	=> 'Antispam answer'
+						'inputlabel'	=> __( 'Antispam answer', 'pagelines-poppy' )
 						),
 					'poppy_email_layout'	=> array(
 						'type'	=> 'text',
-						'inputlabel'	=> 'Format for email subject. Possible values: %name% %blog%',
+						'inputlabel'	=> __( 'Format for email subject. Possible values: %name% %blog%', 'pagelines-poppy' ),
 						'default'	=> '[%blog%] New message from %name%.',
 
 						)
