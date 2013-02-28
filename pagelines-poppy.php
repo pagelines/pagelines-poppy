@@ -245,17 +245,17 @@ class PageLinesPoppy {
 
 		if ( ploption( 'poppy_enable_captcha' ) ){
 			if( '' == $captcha )
-				die( 'Captcha cannot be empty!' );
+				die( __( 'Captcha cannot be empty!', 'pagelines-poppy' ) );
 			if( $captcha !== $captcha_ans )
-				die( 'Captcha does not match.' );
+				die( __( 'Captcha does not match.', 'pagelines-poppy' ) );
 		}
 
 		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
-			die( 'Email address is not valid.' );
+			die( __( 'Email address is not valid.', 'pagelines-poppy' ) );
 		} elseif( strlen( $name ) == 0 ) {
-			die( 'Name cannot be empty.' );
+			die( __( 'Name cannot be empty.', 'pagelines-poppy' ) );
 		} elseif( strlen( $contents ) == 0 ) {
-			die( 'Content cannot be empty.' );
+			die( __( 'Content cannot be empty.', 'pagelines-poppy' ) );
 		}
 
 		// create an email.
@@ -277,7 +277,7 @@ class PageLinesPoppy {
 		if( wp_mail( $admin_email, $subject, $template ) ) {
 			die( 'ok' );
 		} else {
-			 die( 'Unknown wp_mail() error.' );
+			 die( __( 'Unknown wp_mail() error.', 'pagelines-poppy' ) );
 		}
 	}
 }
