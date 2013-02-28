@@ -5,12 +5,13 @@ Plugin URI: http://www.pagelines.com
 Description: Adds a simple contact form shortcode to be used anywhere on your site.
 Author: PageLines
 PageLines: true
-Version: 1.2
+Version: 1.3
 Demo: http://poppy.pagelines.me
 */
 
 class PageLinesPoppy {
 
+	var $version = 1.3;
 	function __construct() {
 
 		$this->base_dir	= plugin_dir_path( __FILE__ );
@@ -32,8 +33,14 @@ class PageLinesPoppy {
 	}
 
 	function hooks_with_activation() {
-		wp_enqueue_script( 'poppyjs', plugins_url( '/script.js', __FILE__ ), array( 'jquery' ), time() );
+		wp_enqueue_script( 'poppyjs', plugins_url( '/script.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_localize_script( 'poppyjs', 'poppyjs', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
+		if( ! function_exists( 'pl_detect_ie' ) )
+			return;
+		$ie_ver = pl_detect_ie();
+		if( $ie_ver < 10 )
+			wp_enqueue_script( 'formalize', plugins_url( '/formalize.min.js', __FILE__ ), array( 'jquery' ), $this->version );
 	}
 
 	function get_less( $less ){
@@ -75,7 +82,7 @@ class PageLinesPoppy {
 
 	function form() {
 		ob_start();
-		$email		= __( 'Email', 'pagelines-poppy' );
+		$email		= __( 'Email Address', 'pagelines-poppy' );
 		$name		= __( 'Name', 'pagelines-poppy' );
 		$message	= __( 'Your Message...', 'pagelines-poppy' );
 		$send		= __( 'Send Message', 'pagelines-poppy' );
@@ -92,7 +99,7 @@ class PageLinesPoppy {
 					<div class="controls form-inline">
 						<?php
 						printf( '<input class="poppy-input poppy-name" placeholder="%1$s" id="ajaxcontactname" type="text" name="%1$s">', $name );
-						printf( '<input class="poppy-input poppy-email" placeholder="Email Address" id="ajaxcontactemail" type="text" name="Email">',$email );
+						printf( '<input class="poppy-input poppy-email" placeholder="%1$s" id="ajaxcontactemail" type="text" name="%1$s">',$email );
 						if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
 							printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( ploption( 'poppy_extra_field' ) ) );
 						?>
@@ -101,7 +108,7 @@ class PageLinesPoppy {
 			<div class="control-group">
 				<div class="controls">
 					<div class="textarea">
-						<?php printf( '<textarea class="poppy-msg" row="8" placeholder="%1$s" id="ajaxcontactcontents" name="%$1s"></textarea>', $message ); ?>
+						<?php printf( '<textarea class="poppy-msg" row="8" placeholder="%s" id="ajaxcontactcontents" name="%s"></textarea>', $message, $message ); ?>
 					</div>
 				</div>
 			</div>
