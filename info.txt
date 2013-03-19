@@ -7,6 +7,22 @@ Adds a simple contact form shortcode to be used anywhere on your site.
 
 == Changelog ==
 
+= 1.3 =
+
+* Add support for ie8/ie9.
+* Fix translation mistake.
+
+= 1.2 =
+
+* Add better descriptions.
+* Make options translatable.
+* include auto generated pot file!
+
+= 1.1 =
+
+* Remove From headers, fixes SPF issue.
+* Use stripslashes.
+
 = 1.0 =
 
 * Release.
