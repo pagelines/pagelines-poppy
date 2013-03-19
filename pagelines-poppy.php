@@ -143,6 +143,8 @@ class PageLinesPoppy {
 			'poppy_options'	=> array(
 				'type'	=> 'multi_option',
 				'layout'	=> 'full',
+				'title'		=> 'Poppy Options',
+				'shortexp'	=> 'Configure your Poppy forms here.',
 				'exp'	=> 'Here are a few examples:<br /><br /><strong>[poppy]</strong><br />Creates a standard button with the word "Contact"<br /><br /><strong>[poppy]Email me![/poppy]</strong><br />Same as above with custom text.<br /><br /><strong>[poppy type="a"]Contact me.[/poppy]</strong><br />This uses a standard HTML link.<br /><br /><strong>[poppy type="button" class="btn-important"]Email.[/poppy]</strong><br />Here we are using the bootstrap button, and adding a class.<br /><br /><strong>[poppy type="label" class="label-warning"]CONTACT[/poppy]</strong><br />What about a bootstrap label?<br /><br /><strong>[poppy type="i" class="icon-envelope icon-4x"]&nbsp;[/poppy]</strong><br />Finally a giant font-awesome envelope!',
 				'selectvalues'	=> array(
 					'poppy_form_title' => array(
