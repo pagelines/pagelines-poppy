@@ -19,7 +19,7 @@ class PageLinesPoppy {
 		$this->icon		= plugins_url( '/icon.png', __FILE__ );
 		$this->less		= $this->base_dir . '/style.less';
 		add_filter( 'pagelines_lesscode', array( &$this, 'get_less' ), 10, 1 );
-		add_action( 'admin_init', array( &$this, 'admin_page' ) );
+		add_action( 'init', array( &$this, 'admin_page' ) );
 		add_action( 'init', array( &$this, 'add_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this, 'hooks_with_activation' ) );
 		add_action( 'wp_ajax_nopriv_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
@@ -276,11 +276,20 @@ class PageLinesPoppy {
 			"\n",
 			$custom
 			);
-		if( wp_mail( $admin_email, $subject, $template ) ) {
+			
+		if( true === ( $result = wp_mail( $admin_email, $subject, $template ) ) )
 			die( 'ok' );
-		} else {
-			 die( __( 'Unknown wp_mail() error.', 'pagelines-poppy' ) );
-		}
+		
+		if ( ! $result ) {
+
+			global $phpmailer;
+		
+			if( isset( $phpmailer->ErrorInfo ) ) {
+				die( sprintf( 'Error: %s', $phpmailer->ErrorInfo ) );
+			} else {
+				die( __( 'Unknown wp_mail() error.', 'pagelines-poppy' ) );
+			}
+		}		
 	}
 }
 new PageLinesPoppy;
