@@ -5,7 +5,7 @@ Plugin URI: http://www.pagelines.com
 Description: Adds a simple contact form shortcode to be used anywhere on your site.
 Author: PageLines
 PageLines: true
-Version: 1.3
+Version: 1.4
 Demo: http://poppy.pagelines.me
 */
 
@@ -18,13 +18,13 @@ class PageLinesPoppy {
 		$this->base_url = plugins_url( '', __FILE__ );
 		$this->icon		= plugins_url( '/icon.png', __FILE__ );
 		$this->less		= $this->base_dir . '/style.less';
-		add_filter( 'pagelines_lesscode', array( &$this, 'get_less' ), 10, 1 );
-		add_action( 'pagelines_setup', array( &$this, 'admin_page' ) );
-		add_action( 'init', array( &$this, 'add_shortcode' ) );
-		add_action( 'wp_enqueue_scripts', array( &$this, 'hooks_with_activation' ) );
-		add_action( 'wp_ajax_nopriv_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
-		add_action( 'wp_ajax_ajaxcontact_send_mail', array( &$this, 'ajaxcontact_send_mail' ) );
-		add_action( 'plugins_loaded', array( &$this, 'translate') );
+		add_filter( 'pagelines_lesscode', array( $this, 'get_less' ), 10, 1 );
+		add_action( 'init', array( $this, 'admin_page' ) );
+		add_action( 'init', array( $this, 'add_shortcode' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'hooks_with_activation' ) );
+		add_action( 'wp_ajax_nopriv_ajaxcontact_send_mail', array( $this, 'ajaxcontact_send_mail' ) );
+		add_action( 'wp_ajax_ajaxcontact_send_mail', array( $this, 'ajaxcontact_send_mail' ) );
+		add_action( 'plugins_loaded', array( $this, 'translate') );
 	}
 
 	function translate() {
@@ -32,15 +32,22 @@ class PageLinesPoppy {
  		load_plugin_textdomain( 'pagelines-poppy', false, $plugin_dir );
 	}
 
+	function get_pl_setting( $opt ) {
+		if( function_exists( 'pl_setting' ) )
+			return pl_setting( $opt );
+		else
+			return ploption( $opt );
+	}
+
 	function hooks_with_activation() {
-		wp_enqueue_script( 'poppyjs', plugins_url( '/script.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'poppyjs', plugins_url( '/script.js', __FILE__ ), array( 'jquery' ), $this->version, true);
 		wp_localize_script( 'poppyjs', 'poppyjs', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
 		if( ! function_exists( 'pl_detect_ie' ) )
 			return;
 		$ie_ver = pl_detect_ie();
 		if( $ie_ver < 10 )
-			wp_enqueue_script( 'formalize', plugins_url( '/formalize.min.js', __FILE__ ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( 'formalize', plugins_url( '/formalize.min.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 	}
 
 	function get_less( $less ){
@@ -50,7 +57,7 @@ class PageLinesPoppy {
 
 	}
 	function add_shortcode() {
-		add_shortcode( 'poppy', array(  &$this, 'draw_button' ) );
+		add_shortcode( 'poppy', array(  $this, 'draw_button' ) );
 	}
 
 	function draw_button( $atts, $content = null ) {
@@ -76,7 +83,7 @@ class PageLinesPoppy {
 			$content,
 			$type
 			);
-		add_action( 'wp_footer', array( &$this, 'form' ) );
+		add_action( 'wp_footer', array( $this, 'form' ) );
 		return $button;
 	}
 
@@ -89,7 +96,7 @@ class PageLinesPoppy {
 	?>
 <div id="poppy-modal" class="hide fade modal poppy" >
 	<div class="modal-header"><a class="close" data-dismiss="modal" aria-hidden="true">×</a>
-		<h3><?php echo ploption( 'poppy_form_title' ) ?></h3>
+		<h3><?php echo $this->get_pl_setting( 'poppy_form_title' ) ?></h3>
 	</div>
 	<div class="modal-body">
 		<div class="poppy-response"></div>
@@ -100,8 +107,8 @@ class PageLinesPoppy {
 						<?php
 						printf( '<input class="poppy-input poppy-name" placeholder="%1$s" id="ajaxcontactname" type="text" name="%1$s">', $name );
 						printf( '<input class="poppy-input poppy-email" placeholder="%1$s" id="ajaxcontactemail" type="text" name="%1$s">',$email );
-						if ( ploption( 'poppy_enable_extra' ) && '' != ploption( 'poppy_extra_field' ) )
-							printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( ploption( 'poppy_extra_field' ) ) );
+						if ( $this->get_pl_setting( 'poppy_enable_extra' ) && '' != $this->get_pl_setting( 'poppy_extra_field' ) )
+							printf( '<input class="poppy-input poppy-custom" placeholder="%1$s" id="ajaxcontactcustom" type="text" name="%1$s">', stripslashes( $this->get_pl_setting( 'poppy_extra_field' ) ) );
 						?>
 					</div>
 				</div>
@@ -113,7 +120,7 @@ class PageLinesPoppy {
 				</div>
 			</div>
 
-			<?php if ( ploption( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
+			<?php if ( $this->get_pl_setting( 'poppy_enable_captcha' ) ) $this->captcha(); ?>
 
 			<div class="controls">
 				<?php printf( '<a class="btn btn-primary send-poppy">%s</a>', $send ); ?>
@@ -135,7 +142,7 @@ class PageLinesPoppy {
 		<div class="controls">
 			<input class="span2 poppy-captcha" placeholder="%s" id="ajaxcontactcaptcha" type="text" name="ajaxcontactcaptcha" />
 		</div>
-	</div>', stripslashes( ploption( 'poppy_captcha_question' ) ) );
+	</div>', stripslashes( $this->get_pl_setting( 'poppy_captcha_question' ) ) );
 	echo $code;
 	}
 
@@ -144,6 +151,7 @@ class PageLinesPoppy {
 
 		if ( ! function_exists( 'ploption' ) )
 			return;
+
 		$option_args = array(
 
 			'name'		=> 'Poppy',
@@ -205,7 +213,7 @@ class PageLinesPoppy {
 						),
 					'poppy_email_layout'	=> array(
 						'type'	=> 'text',
-						'inputlabel'	=> __( 'Format for email subject. Possible values: %name% %blog%', 'pagelines-poppy' ),
+						'inputlabel'	=> __( 'Format for email subject. Possible values: %name% %blog%<br />Defaults: [%blog%] New message from %name%.', 'pagelines-poppy' ),
 						'default'	=> '[%blog%] New message from %name%.',
 
 						)
@@ -235,17 +243,17 @@ class PageLinesPoppy {
 		$name			= $data['name'];
 		$email			= $data['email'];
 		$custom			= $data['custom'];
-		$custom_field	= ( ploption( 'poppy_enable_extra' ) ) ? ploption( 'poppy_extra_field' ) : '';
+		$custom_field	= ( $this->get_pl_setting( 'poppy_enable_extra' ) ) ? $this->get_pl_setting( 'poppy_extra_field' ) : '';
 		$contents		= $data['msg'];
-		$admin_email	= ( ploption( 'poppy_email' ) ) ? ploption( 'poppy_email' ) : get_option( 'admin_email' );
+		$admin_email	= ( $this->get_pl_setting( 'poppy_email' ) ) ? $this->get_pl_setting( 'poppy_email' ) : get_option( 'admin_email' );
 		$captcha		= $data['cap'];
-		$captcha_ans	= ploption( 'poppy_captcha_answer' );
+		$captcha_ans	= $this->get_pl_setting( 'poppy_captcha_answer' );
 		$width			= $data['width'];
 		$height			= $data['height'];
 		$ip				= $_SERVER['REMOTE_ADDR'];
 		$agent			= $data['agent'];
 
-		if ( ploption( 'poppy_enable_captcha' ) ){
+		if ( $this->get_pl_setting( 'poppy_enable_captcha' ) ){
 			if( '' == $captcha )
 				die( __( 'Captcha cannot be empty!', 'pagelines-poppy' ) );
 			if( $captcha !== $captcha_ans )
@@ -261,7 +269,7 @@ class PageLinesPoppy {
 		}
 
 		// create an email.
-		$subject_template	= ( '' != ploption( 'poppy_email_layout' ) ) ? ploption( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
+		$subject_template	= ( '' != $this->get_pl_setting( 'poppy_email_layout' ) ) ? $this->get_pl_setting( 'poppy_email_layout' ) : '[%blog%] New message from %name%.';
 		$subject			= str_replace( '%blog%', get_bloginfo( 'name' ), str_replace( '%name%', $name, $subject_template ) );
 		$custom 			= ( $custom_field ) ? sprintf( '%s: %s', $custom_field, $custom ) : '';
 		$fields = 'Name: %s %7$sEmail: %s%7$sContents%7$s=======%7$s%s %7$s%7$sUser Info.%7$s=========%7$sIP: %s %7$sScreen Res: %s %7$sAgent: %s %7$s%7$s%8$s';
